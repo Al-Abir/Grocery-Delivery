@@ -8,7 +8,7 @@ const App = () => {
   return (
     <div>
       {isSellerPath? null: <Navbar></Navbar> }
-      <div className={`${isSellerPath}? " ": "px-6 md:px-16 lg:px-24"`}>
+      <div className={`${isSellerPath?"":"px-6 md:px-16 lg:px-24"}`}>
          <Routes>
              <Route path='/'element={<Home></Home>}>
 
