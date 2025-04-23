@@ -9,9 +9,9 @@ const BestSeller = () => {
         <p className='text-2xl md:text-3xl font-medium'>Best Sellers</p>
         <div className='mt-6 mb-5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6 l'>
         {
-            products.filter((product)=> product.inStock).slice(0,5).map((product, index)=>(
+            products.filter((product,i)=> product.inStock).slice(0,5).map((product, index)=>(
 
-                <ProductCard product={product} ></ProductCard>
+                <ProductCard product={product} key={index} ></ProductCard>
             ))
         }
 
