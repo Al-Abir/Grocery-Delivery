@@ -1,2 +1,7 @@
-node_modules
-.env
+# Ignore client-side dependencies
+/client/node_modules
+/client/.env
+
+# Ignore server-side dependencies
+/server/node_modules
+/server/.env
