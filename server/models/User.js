@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
         default:{}
    }
 
-})
+},{minimize:false})
 
 const User = mongoose.models.user || mongoose.model('user',userSchema)
 

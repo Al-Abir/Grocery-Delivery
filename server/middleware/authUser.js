@@ -11,12 +11,14 @@ const authUser = async (req, res, next) => {
         const tokenDecode = jwt.verify(token, process.env.JWT_SECRET);
 
         if (tokenDecode.id) {
-            req.userId = tokenDecode.id; // ✅ safer than req.body.userId
+            
+            req.userId = tokenDecode.id;// ✅ safer than req.body.userId
             next();
         } else {
             return res.status(401).json({ success: false, message: "Not Authorized" });
         }
     } catch (error) {
+        
         return res.status(401).json({ success: false, message: error.message });
     }
 };
