@@ -48,13 +48,18 @@ export const getUserOrders = async (req, res) => {
 
 
 // Get all orders (for seller/admin): /api/order/seller
-export const getAllOrders = async ()=>{
-    try {
-        const orders = await Order.find({
-            $or:[{paymentType:"COD"},{isPaid:true}]
-        }).populate("items.product address")
-        res.json({success:true, orders}).sort({createdAt:-1})
-    } catch (error) {
-        return res.json({success:false, message:error.message})
-    }
-}
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({
+      $or: [{ paymentType: "COD" }, { isPaid: true }]
+    })
+    .sort({ createdAt: -1 })
+    .populate("items.product address");
+
+    return res.json({ success: true, orders }); // <-- ensure you return here
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
