@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useAppContext } from "../context/AppContext"
 import { assets, dummyAddress } from "../assets/assets"
+import toast from "react-hot-toast"
 
 const Cart = () => {
   
-     const {products,currency, cartItems,removeFromCart,getCartCount,updateCartItem,navigate,getCartAmount} = useAppContext()
+     const {products,currency, cartItems,removeFromCart,getCartCount,updateCartItem,navigate,getCartAmount,axios,user,setCartItems} = useAppContext()
      const[cartArray,setCatArray] = useState([])
      const[address,setAddress] = useState([dummyAddress[0]])
      const [showAddress, setShowAddress] = useState(false)
@@ -23,15 +24,69 @@ const Cart = () => {
          setCatArray(tempArray)
      }
 
-     const placeOrder = async ()=>{
-         
-     }
-     
+
+ const getUserAddress = async()=>{
+         try {
+             const{data}= await axios.get("/api/address/get")
+             if(data.success){
+                setAddress(data.address)
+                if(data.address.length>0){
+                    setSelectedAddress(data.address[0])
+                }
+             }else{
+                toast.error(data.message)
+             }
+         } catch (error) {
+            toast.error(error.message)
+         }
+      }
+
+    const placeOrder = async () => {
+    try {
+        if (!selectedAddress) {
+            return toast.error("Please select an address");
+        }
+
+        if (paymentOption === "COD") {
+            const { data } = await axios.post('/api/order/cod', {
+                userId: user._id,
+                items: cartArray.map(item => ({ 
+                    product: item._id, 
+                    quantity: item.quantity 
+                })),
+                address: selectedAddress._id
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (data.success) {
+                toast.success(data.message);
+                setCartItems({});
+                navigate('/my-orders');
+            } else {
+                toast.error(data.message);
+            }
+        } else {
+            // Handle other payment methods here
+            toast.error("Other payment methods not implemented yet");
+        }
+    } catch (error) {
+        toast.error(error.response?.data?.message || error.message);
+    }
+};
      useEffect(()=>{
           if(products.length>0 && cartItems){
             getCart()
           }
      },[products,cartItems])
+
+     useEffect(()=>{
+          if(user){
+            getUserAddress()
+          }
+     },[user])
 
     return  products.length>0 && cartItems ? (
         <div className="flex flex-col md:flex-row mt-16">
