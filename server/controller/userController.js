@@ -100,17 +100,18 @@ export const isAuth = async(req,res)=>{
 
 //logut User: /api/user/logut
 
-export const logout = async(req,res)=>{
+export const logout = async (req, res) => {
     try {
-        res.clearCookie('token',{
-          httpOnly:true,
-          secure:process.env.NODE_ENV ==='production',
-          sameSite:process.env.NODE_ENV ==='production'?"none":"strict",
-         
-        })
-        return res.json({success:true, message:"Logged out"})
+        res.cookie('token', '', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Strict',
+            expires: new Date(0), // 🛑 এটা খুব গুরুত্বপূর্ণ
+        });
+
+        return res.json({ success: true, message: "Logged out" });
     } catch (error) {
-        console.log(error.message)
-        return res.json({success:false, message:error.message})
+        console.log(error.message);
+        return res.json({ success: false, message: error.message });
     }
-}
+};
