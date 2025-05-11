@@ -1,34 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
-// import { dummyOrders } from '../assets/assets'
 
 const MyOrders = () => {
   const [myOrders, setMyOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currency, axios, user } = useAppContext();
 
- const fetchMyOrders = async () => {
+  const fetchMyOrders = async () => {
     try {
-        const { data } = await axios.get('/api/order/user');
-        console.log("API Response:", data); // Check the entire response
-        if (data.success) {
-            setMyOrders(data.orders);
-            console.log("My Orders:", data.orders); // Check the orders array
-        }
+      const { data } = await axios.get('/api/order/user');
+      console.log("API Response:", data);
+      if (data.success) {
+        setMyOrders(data.orders);
+        console.log("My Orders:", data.orders);
+      }
     } catch (error) {
-        console.error("Error fetching orders:", error);
+      console.error("Error fetching orders:", error);
     }
-};
+  };
 
-useEffect(() => {
-    console.log("User in useEffect:", user); // Check the user object
+  useEffect(() => {
+    console.log("User in useEffect:", user);
     if (user) {
       fetchMyOrders();
     }
-}, [user]);
+  }, [user]);
 
-console.log("Rendering myOrders:", myOrders); // Check what's being used for rendering
-
+  console.log("Rendering myOrders:", myOrders);
 
   return (
     <div className="mt-16 pl-20">
@@ -36,6 +34,7 @@ console.log("Rendering myOrders:", myOrders); // Check what's being used for ren
         <p className="text-2xl font-medium uppercase">My Orders</p>
         <div className="w-16 h-0.5 bg-primary rounded-full" />
       </div>
+
       {myOrders.map((order) => (
         <div
           key={order._id}
@@ -48,42 +47,49 @@ console.log("Rendering myOrders:", myOrders); // Check what's being used for ren
               Total Amount: {currency} {order.amount}
             </span>
           </p>
-          {order.items.map((item) => (
-            <div
-              key={item.product._id}
-              className={`relative bg-white text-gray-500/70 
-                      ${
-                        order.items.length !== order.items.indexOf(item) + 1 &&
-                        "border-b"
-                      } 
-                      border-gray-300 flex flex-col md:flex-row md:items-center justify-between p-4 py-5 md:gap-16 w-full max-w-4xl`}
-            >
-              <div className="flex items-center mb-4 md:mb-0">
-                <div className="bg-primary/10 p-4 rounded-b-lg">
-                  <img
-                    src={item.product.image?.[0]}
-                    alt={item.product.name}
-                    className="w-16 h-16"
-                  />
+
+          {order.items.map((item, idx) =>
+            item.product ? (
+              <div
+                key={item.product._id}
+                className={`relative bg-white text-gray-500/70 
+                  ${idx !== order.items.length - 1 && "border-b"} 
+                  border-gray-300 flex flex-col md:flex-row md:items-center justify-between p-4 py-5 md:gap-16 w-full max-w-4xl`}
+              >
+                <div className="flex items-center mb-4 md:mb-0">
+                  <div className="bg-primary/10 p-4 rounded-b-lg">
+                    <img
+                      src={item.product.image?.[0] || "/fallback.jpg"}
+                      alt={item.product.name || "Product"}
+                      className="w-16 h-16 object-cover"
+                    />
+                  </div>
+                  <div className="ml-4">
+                    <h2 className="text-xl font-medium text-gray-800">
+                      {item.product.name}
+                    </h2>
+                    <p>Category: {item.product.category}</p>
+                  </div>
                 </div>
-                <div className="ml-4">
-                  <h2 className="text-xl font-medium text-gray-800">
-                    {item.product.name}
-                  </h2>
-                  <p>Category: {item.product.category}</p>
+                <div className="flex flex-col justify-center md:ml-8 mb-4 md:mb-0">
+                  <p>Quantity: {item.quantity || 1}</p>
+                  <p>Status: {order.status}</p>
+                  <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
                 </div>
+                <p className="text-primary text-lg font-medium">
+                  Amount: {currency}{" "}
+                  {item.product.offerPrice * (item.quantity || 1)}
+                </p>
               </div>
-              <div className="flex flex-col justify-center md:ml-8 mb-4 md:mb-0">
-                <p>Quantity: {item.quantity || 1}</p>
-                <p>Status: {order.status}</p>
-                <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+            ) : (
+              <div
+                key={idx}
+                className="p-4 border-b border-gray-200 text-red-500 italic"
+              >
+                ⚠️ Product details not available for this item.
               </div>
-              <p className="text-primary text-lg font-medium">
-                Amount: {currency}{" "}
-                {item.product.offerPrice * (item.quantity || 1)}
-              </p>
-            </div>
-          ))}
+            )
+          )}
         </div>
       ))}
     </div>
