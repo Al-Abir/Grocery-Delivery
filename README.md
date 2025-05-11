@@ -31,7 +31,7 @@ This project is a fully-featured online grocery-shop website where users can bro
 ### 🛠️ Admin Features:
 
 - 📊 Admin Dashboard (Sales, Orders, Users overview)
-- ➕ Add / ✏️ Edit / ❌ Delete Laptop Products
+- ➕ Add / ✏️ Update /  InStock  Products
 - 🔐 Admin-only Protected Routes
 - 📦 Order Management
 - 💰 Discount & Offer Management
