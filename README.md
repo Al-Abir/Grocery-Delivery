@@ -6,7 +6,7 @@ This project is a fully-featured online grocery-shop website where users can bro
 
 ## 🚀 Live Demo
 
-- 🌐 [Live Link](https://grocery-two-hazel.vercel.app)
+- 🌐 [Live Link](https://grocery-delivery-brown.vercel.app)
 
 ---
 
