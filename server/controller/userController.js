@@ -29,13 +29,15 @@ export const register = async (req, res)=>{
 
         const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"7d"})
     
-      res.cookie("token", token, {
-  httpOnly: true,
-  secure: true,                  // 🔴 must be true if HTTPS
-  sameSite: "none",              // 🔴 must be "none" for cross-origin
-  path: "/",                     // 🔴 super important
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-});
+        res.cookie('token', token,{
+            httpOnly:true,
+            secure:process.env.NODE_ENV ==='production',//Use secure cookies in production
+            sameSite:process.env.NODE_ENV ==='production'?"none":"strict",//CSRF protection
+            path:'/',
+            maxAge:7*24*60*60*1000, //cookie expiration time
+         
+        })
+
         return res.json({success:true, user:{email:user.email , name:user.name}})
     
     } catch (error) {
@@ -70,13 +72,13 @@ export const login = async(req,res)=>{
 
       const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"7d"})
     
-     res.cookie("token", token, {
-  httpOnly: true,
-  secure: true,                  // 🔴 must be true if HTTPS
-  sameSite: "none",              // 🔴 must be "none" for cross-origin
-  path: "/",                     // 🔴 super important
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-});
+      res.cookie('token', token,{
+          httpOnly:true,
+          secure:process.env.NODE_ENV ==='production',
+          sameSite:process.env.NODE_ENV ==='production'?"none":"strict",
+          path:'/',
+          maxAge:7*24*60*60*1000, 
+      })
 
       return res.json({success:true, user:{email:user.email , name:user.name}})
   
@@ -102,12 +104,14 @@ export const isAuth = async(req,res)=>{
 
 export const logout = async(req,res)=>{
     try {
-      res.clearCookie("token", {
-  httpOnly: true,                // optional but okay
-  secure: true,                  // 🔴 must match exactly
-  sameSite: "none",              // 🔴 must match exactly
-  path: "/",                     // 🔴 must match exactly
-});
+        res.clearCookie('token',{
+          httpOnly:true,
+          secure:process.env.NODE_ENV ==='production',
+          sameSite:process.env.NODE_ENV ==='production'?"none":"strict",
+          path: '/',   
+          expires: new Date(0), // Forces immediate expiration (delete   
+         
+        })
         return res.json({success:true, message:"Logged out"})
     } catch (error) {
         console.log(error.message)
